@@ -4,9 +4,12 @@ import java.util.ArrayList;
 
 public class Column {
     String name;
-    ArrayList<String> rows;
+    ArrayList<String> rows = new ArrayList<>();
 
-    public Column(String name){ this.name = name;}
+    public Column(String name){
+        if (name == null || name.isBlank()) throw new IllegalArgumentException("Column name must not be null/blank");
+        this.name = name;
+    }
 
     public String getName() { return name;}
 
