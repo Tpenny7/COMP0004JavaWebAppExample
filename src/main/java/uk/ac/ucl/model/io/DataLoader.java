@@ -1,38 +1,43 @@
 package uk.ac.ucl.model.io;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import uk.ac.ucl.model.DataFrame;
-import uk.ac.ucl.model.DuplicateColumnException;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+import uk.ac.ucl.model.DuplicateColumnException;
+import java.io.FileNotFoundException;
 
 public class DataLoader {
     DataFrame dataFrame;
 
-    public DataFrame getDataFrame(){return dataFrame;}
+    public DataFrame getDataFrame() {
+        return dataFrame;
+    }
 
-    public void importData(String fileName) throws FileNotFoundException {
+    public void importData(String fileName) {
         dataFrame = new DataFrame();
-        FileInput file;
-        try {
-            file = new FileInput(fileName);
-            String[] columnNames;
-            if (!file.hasNext()) throw new DataLoadException("Empty file: ", fileName);
-            columnNames = file.nextLine().split(",", -1);
-            for (String columnName : columnNames) {
+        CSVFormat format = CSVFormat.DEFAULT.withFirstRecordAsHeader();
+        try (Reader reader = Files.newBufferedReader(Path.of(fileName));
+             CSVParser parser = new CSVParser(reader, format)) {
+            List<String> headers = parser.getHeaderNames();
+            for (String columnName : headers) {
                 dataFrame.addColumn(columnName);
             }
-            while (file.hasNext()) {
-                String[] columnValues = file.nextLine().split(",");
-                if (columnValues.length != columnNames.length) {
-                    throw new DataLoadException("Wrong number of values for number of rows", fileName);
-                }
-                for (int i = 0; i < columnValues.length; i++) {
-                    dataFrame.addValue(columnNames[i], columnValues[i]);
+            for (CSVRecord r : parser) {
+                for (String h : headers) {
+                    dataFrame.addValue(h, r.get(h));
                 }
             }
         } catch (IOException e) {
-            throw new DataLoadException("Failed to read file: ", fileName);
+            throw new DataLoadException("Failed to read file: ", fileName, e);
         }
     }
 }
