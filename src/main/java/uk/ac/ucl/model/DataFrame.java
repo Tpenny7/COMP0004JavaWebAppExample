@@ -28,7 +28,7 @@ public class DataFrame {
         return names;
     }
 
-    private Column getColumn(String columnName){
+    public Column getColumn(String columnName){
         if (columnName == null || columnName.isBlank()) throw new IllegalArgumentException(columnName);
         for(Column column : columns){
             if (columnName.equals(column.getName())){
@@ -41,6 +41,7 @@ public class DataFrame {
     public int getRowCount() {
         return columns.isEmpty() ? 0 : columns.getFirst().getSize();
     }
+
 
     public String getValue(String columnName, int row){
         return getColumn(columnName).getRowValue(row);

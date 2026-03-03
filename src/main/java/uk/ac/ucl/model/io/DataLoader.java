@@ -7,13 +7,10 @@ import uk.ac.ucl.model.DataFrame;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import uk.ac.ucl.model.DuplicateColumnException;
-import java.io.FileNotFoundException;
 
 public class DataLoader {
     DataFrame dataFrame;
@@ -37,7 +34,7 @@ public class DataLoader {
                 }
             }
         } catch (IOException e) {
-            throw new DataLoadException("Failed to read file: ", fileName, e);
+            throw new DataLoadException("Failed to read file: " + fileName, e);
         }
     }
 }

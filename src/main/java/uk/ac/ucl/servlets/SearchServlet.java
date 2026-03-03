@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import uk.ac.ucl.model.ModelFactory;
+import uk.ac.ucl.model.Model;
 
 import java.io.IOException;
 import java.util.List;

@@ -22,6 +22,7 @@ public class ModelFactory
       // and the pathname to locate it.
       // The data should be read the file once, not every time the model is accessed!
       model.readFile("data/patients100.csv");
+      model.buildPatientSummary();
     }
     return model;
   }
