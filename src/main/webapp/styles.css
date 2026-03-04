@@ -1,3 +1,27 @@
 .clearBoth {
   clear: both;
 }
+table.kv {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+table.kv th, table.kv td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e6e6e6;
+  text-align: left;
+  vertical-align: top;
+}
+
+table.kv th {
+  width: 30%;
+  color: #333;
+  background: #fafafa;
+  font-weight: 600;
+}
+
+table.kv tbody tr:nth-child(even) td,
+table.kv tbody tr:nth-child(even) th {
+  background: #fcfcff;
+}

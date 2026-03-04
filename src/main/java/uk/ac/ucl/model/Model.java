@@ -3,10 +3,7 @@ package uk.ac.ucl.model;
 import java.io.Reader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import uk.ac.ucl.model.io.DataLoadException;
 import uk.ac.ucl.model.io.DataLoader;
@@ -19,11 +16,14 @@ public class Model
   DataFrame patients;
   DataLoader fileLoader = new DataLoader();
   Map<String, String> patientSummary;
+  Map<String, Integer> patientIDtoColumn;
+  ArrayList<String> columnNames;
 
   public void readFile(String fileName)
   {
       fileLoader.importData(fileName);
       patients = fileLoader.getDataFrame();
+      columnNames = patients.getColumnNames();
   }
 
   // This also returns dummy data. The real version should use the keyword parameter to search
@@ -35,6 +35,7 @@ public class Model
 
   public void buildPatientSummary(){
     patientSummary = new HashMap<>();
+    patientIDtoColumn = new HashMap<>();
     Column firstNames = patients.getColumn("FIRST");
     Column lastNames = patients.getColumn("LAST");
     Column IDs = patients.getColumn("ID");
@@ -43,10 +44,26 @@ public class Model
       patientSummary.put(IDs.getRowValue(i),
               firstNames.getRowValue(i).split("[0-9]",2)[0] + " "
                       + lastNames.getRowValue(i).split("[0-9]",2)[0]);
+      patientIDtoColumn.put(IDs.getRowValue(i), i);
     }
   }
 
   public Map<String,String> getPatientSummary(){return patientSummary;}
+
+  public Map<String,String> getSpecificPatient(String ID){
+    try {
+      int column = patientIDtoColumn.get(ID);
+      Map<String, String> patient = new LinkedHashMap<>();
+      for (String columnName : columnNames) {
+        patient.put(columnName, patients.getValue(columnName, column));
+      }
+      return patient;
+    } catch (IllegalArgumentException e){
+        throw new DataLoadException("Patient with ID" + ID + "not found", e);
+    } catch (ColumnNotFoundException e){
+        throw new DataLoadException("Column not found", e);
+    }
+  }
 
   public List<String> getPatientAttribute(String columnName){
     ArrayList<String> patientAttribute = new ArrayList<>();
