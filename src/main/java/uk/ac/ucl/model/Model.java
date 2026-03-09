@@ -28,10 +28,33 @@ public class Model
 
   // This also returns dummy data. The real version should use the keyword parameter to search
   // the data and return a list of matching items.
-  public List<String> searchFor(String keyword)
-  {
-    return List.of("Search keyword is: "+ keyword, "result1", "result2", "result3");
+  public Map<String, ArrayList<String>> searchFor(String keyword) {
+    Map<String, ArrayList<String>> results = new HashMap<>();
+
+    String k = keyword.toLowerCase();
+    Column idCol = patients.getColumn("ID");
+    int rowCount = patients.getRowCount();
+
+    for (Column c : patients) {
+      for (int i = 0; i < rowCount; i++) {
+        String cell = c.getRowValue(i);
+        if (cell == null) continue;
+
+        if (cell.toLowerCase().contains(k)) {
+          String patientID = idCol.getRowValue(i);
+          results.putIfAbsent(patientID, new ArrayList<>());
+          ArrayList<String> list = results.get(patientID);
+
+          if (list.isEmpty()) {
+            list.add(patientSummary.get(patientID));
+          }
+          list.add(c.getName() + ": " + cell);
+        }
+      }
+    }
+    return results;
   }
+
 
   public void buildPatientSummary(){
     patientSummary = new HashMap<>();

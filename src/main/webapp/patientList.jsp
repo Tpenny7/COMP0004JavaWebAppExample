@@ -9,6 +9,13 @@
 <body>
 <jsp:include page="/header.jsp"/>
 <div class="main">
+  <h1>Search</h1>
+  <form method="GET" action="/runsearch">
+    <input type="text" name="searchstring" required placeholder="Enter search keyword here"/>
+    <input type="submit" value="Search"/>
+  </form>
+</div>
+<div class="main">
   <h2>Patients:</h2>
   <%
     String errorMessage = (String) request.getAttribute("errorMessage");

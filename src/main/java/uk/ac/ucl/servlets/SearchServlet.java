@@ -11,7 +11,9 @@ import uk.ac.ucl.model.ModelFactory;
 import uk.ac.ucl.model.Model;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The SearchServlet handles HTTP requests for performing patient searches.
@@ -68,7 +70,8 @@ public class SearchServlet extends HttpServlet {
       } else {
         // 4. Perform the search and store the results in a request attribute.
         // This makes the 'result' list accessible to the JSP page.
-        List<String> searchResult = model.searchFor(searchString);
+        Map<String, ArrayList<String>> searchResult = model.searchFor(searchString);
+        request.setAttribute("searchstring", searchString);
         request.setAttribute("result", searchResult);
       }
 

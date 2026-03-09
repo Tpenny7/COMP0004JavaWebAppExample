@@ -1,8 +1,10 @@
 package uk.ac.ucl.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
-public class DataFrame {
+public class DataFrame implements Iterable<Column> {
     ArrayList<Column> columns = new ArrayList<>();
 
     public void addColumn(String name){
@@ -26,6 +28,11 @@ public class DataFrame {
             names.add(column.getName());
         }
         return names;
+    }
+
+    @Override
+    public Iterator<Column> iterator() {
+        return Collections.unmodifiableList(columns).iterator();
     }
 
     public Column getColumn(String columnName){

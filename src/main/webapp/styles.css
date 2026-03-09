@@ -25,3 +25,7 @@ table.kv tbody tr:nth-child(even) td,
 table.kv tbody tr:nth-child(even) th {
   background: #fcfcff;
 }
+table.results { border-collapse: collapse; width: 100%; }
+table.results th, table.results td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+.hit { display: inline-block; padding: 2px 8px; margin: 2px; border-radius: 12px; background: #eef; }
+.error { color: #b00020; }

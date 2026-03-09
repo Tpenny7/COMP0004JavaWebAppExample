@@ -1,8 +1,10 @@
 package uk.ac.ucl.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
-public class Column {
+public class Column implements Iterable<String>{
     String name;
     ArrayList<String> rows = new ArrayList<>();
 
@@ -12,6 +14,11 @@ public class Column {
     }
 
     public String getName() { return name;}
+
+    @Override
+    public Iterator<String> iterator(){
+        return Collections.unmodifiableList(rows).iterator();
+    }
 
     public int getSize(){ return rows.size();}
 
