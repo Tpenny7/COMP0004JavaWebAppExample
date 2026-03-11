@@ -28,7 +28,22 @@ public class Model
   }
 
   public Map<String, ArrayList<String[]>> attributeNumbers(String attributeName){
-
+    Map<String, ArrayList<String[]>> results = new HashMap<>();
+    int rowCount = patients.getRowCount();
+    try{
+      Column attribute = patients.getColumn(attributeName);
+      Column idCol = patients.getColumn("ID");
+      for (int i = 0; i<rowCount; i++) {
+        String key = attribute.getRowValue(i);
+        results.putIfAbsent(key, new ArrayList<>());
+        ArrayList<String[]> list =  results.get(key);
+        String id = idCol.getRowValue(i);
+        list.add(new String[]{id, patientSummary.get(id)});
+      }
+      return results;
+    }catch (ColumnNotFoundException e){
+      throw new DataLoadException("Column not found", e);
+    }
   }
 
   public Map<String, ArrayList<String[]>> sameLocations(){
