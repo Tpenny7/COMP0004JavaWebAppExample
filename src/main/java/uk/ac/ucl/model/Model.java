@@ -31,7 +31,7 @@ public class Model
     Map<String, ArrayList<String[]>> results = new HashMap<>();
     int rowCount = patients.getRowCount();
     try{
-      Column attribute = patients.getColumn(attributeName);
+      Column attribute = patients.getColumn(attributeName);l
       Column idCol = patients.getColumn("ID");
       for (int i = 0; i<rowCount; i++) {
         String key = attribute.getRowValue(i);
