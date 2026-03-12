@@ -29,3 +29,17 @@ table.results { border-collapse: collapse; width: 100%; }
 table.results th, table.results td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
 .hit { display: inline-block; padding: 2px 8px; margin: 2px; border-radius: 12px; background: #eef; }
 .error { color: #b00020; }
+
+.home-button {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.home-button:hover {
+  background: #0056b3;
+}

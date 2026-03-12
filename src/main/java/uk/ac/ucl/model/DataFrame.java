@@ -45,6 +45,12 @@ public class DataFrame implements Iterable<Column> {
         throw new ColumnNotFoundException(columnName);
     }
 
+    public Column getColumn(int columnIndex){
+        if (columnIndex <0 || columnIndex>=getRowCount())
+            throw new IllegalArgumentException("Column index out of range" + columnIndex);
+        return columns.get(columnIndex);
+    }
+
     public int getRowCount() {
         return columns.isEmpty() ? 0 : columns.getFirst().getSize();
     }

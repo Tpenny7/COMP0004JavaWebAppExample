@@ -3,14 +3,21 @@ package uk.ac.ucl.model;
 import java.io.Reader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.security.InvalidParameterException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.stream.Collectors;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 
 import uk.ac.ucl.model.io.DataLoadException;
 import uk.ac.ucl.model.io.DataLoader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import uk.ac.ucl.model.io.DataWriteException;
 
 public class Model
 {
@@ -27,19 +34,76 @@ public class Model
       columnNames = patients.getColumnNames();
   }
 
+  public void savePatientsToCsv(Path tmp, Path destination) {
+    int rows = patients.getRowCount();
+    //write to a temporary file
+    try (java.io.Writer writer = new java.io.FileWriter(tmp.toString());
+         CSVPrinter printer = new CSVPrinter(writer,
+                 CSVFormat.DEFAULT.withHeader(columnNames.toArray(new String[0])))) {
+
+      for (int r = 0; r < rows; r++) {
+        List<String> record = new ArrayList<>();
+        for (String col : columnNames) {
+          String v = patients.getValue(col, r);
+          record.add(v == null ? "" : v);
+        }
+        printer.printRecord(record);
+      }
+      java.nio.file.Files.move(tmp, destination,
+              java.nio.file.StandardCopyOption.REPLACE_EXISTING,
+              java.nio.file.StandardCopyOption.ATOMIC_MOVE);
+    } catch (IOException e) {
+      throw new DataLoadException("Error saving CSV", e);
+    }
+  }
+
+
+  public void addPatient(Map<String,String> values){
+    try {
+      String patientID = values.get("ID");
+      patientSummary.put(patientID, values.get("FIRST") + " " + values.get("LAST"));
+      for (String columnName : columnNames) {
+        Column attribute = patients.getColumn(columnName);
+        attribute.addRowValue(values.getOrDefault(columnName,""));
+      }
+      patientIDtoRow.put(patientID, patients.getRowCount()-1);
+    }catch (ColumnNotFoundException e) {
+      throw new DataLoadException("Error loading data, " + e.getMessage());
+    }
+  }
+
+  public String generateNewId() {
+    String id = java.util.UUID.randomUUID().toString();
+    while(patientIDtoRow.containsKey(id)){
+      id = generateNewId();
+    }
+    return id;
+  }
+
+
   public Map<String, ArrayList<String[]>> attributeNumbers(String attributeName){
-    Map<String, ArrayList<String[]>> results = new HashMap<>();
+    Map<String, ArrayList<String[]>> results = new LinkedHashMap<>();
     int rowCount = patients.getRowCount();
     try{
-      Column attribute = patients.getColumn(attributeName);l
+      Column attribute = patients.getColumn(attributeName);
       Column idCol = patients.getColumn("ID");
       for (int i = 0; i<rowCount; i++) {
         String key = attribute.getRowValue(i);
-        results.putIfAbsent(key, new ArrayList<>());
-        ArrayList<String[]> list =  results.get(key);
         String id = idCol.getRowValue(i);
-        list.add(new String[]{id, patientSummary.get(id)});
+        results.computeIfAbsent(key, k -> new ArrayList<>())
+                .add(new String[]{id, patientSummary.get(id)});
       }
+      results = results.entrySet()
+              .stream()
+              .sorted(Comparator.comparingInt(
+                      (Map.Entry<String, ArrayList<String[]>> e) -> e.getValue().size())
+                      .reversed())
+              .collect(Collectors.toMap(
+                      Map.Entry::getKey,
+                      Map.Entry::getValue,
+                      (a, b) -> a,
+                      LinkedHashMap::new
+              ));
       return results;
     }catch (ColumnNotFoundException e){
       throw new DataLoadException("Column not found", e);
@@ -156,6 +220,8 @@ public class Model
       return patients.getColumn("ID").getRowValue(oldestPatientRow);
     }catch (ColumnNotFoundException e){
       throw new DataLoadException("Column not found", e);
+    }catch (DateTimeParseException e){
+      throw new DataLoadException("Invalid date format, " + e.getMessage());
     }
   }
 
@@ -178,6 +244,8 @@ public class Model
       return patients.getColumn("ID").getRowValue(youngestPatientRow);
     }catch (ColumnNotFoundException e){
       throw new DataLoadException("Column not found", e);
+    }catch (DateTimeParseException e){
+      throw new DataLoadException("Invalid date format, " + e.getMessage());
     }
   }
 
