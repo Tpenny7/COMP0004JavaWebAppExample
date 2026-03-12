@@ -1,13 +1,22 @@
 <%@ page import="java.util.Map" %>
 
-<head>
-  <jsp:include page="/meta.jsp"/>
-  <title>Patient details</title>
-</head>
-<jsp:include page="/header.jsp"/>
 <%
   Map<String,String> patient = (Map<String,String>) request.getAttribute("patient");
+  String id = (String) request.getAttribute("id");
+  String href = "editPatient?id=" + id;
 %>
+
+<html>
+<head>
+  <jsp:include page="/meta.jsp"/>
+</head>
+<body>
+<jsp:include page="/header.jsp"/>
+
+<div class="main">
+  <p><a href="<%= href %>">Edit patient</a></p>
+  <h2>Patient details:</h2>
+
 
 <table class="kv">
   <tbody>

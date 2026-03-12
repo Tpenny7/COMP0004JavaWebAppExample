@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import uk.ac.ucl.model.Model;
 import uk.ac.ucl.model.ModelFactory;
 import uk.ac.ucl.model.io.DataLoadException;
+import uk.ac.ucl.model.io.DataWriteException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -18,15 +19,30 @@ import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet("/addPatient")
-public class AddPatient extends HttpServlet {
+
+@WebServlet("/editPatient")
+public class EditPatient extends HttpServlet {
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+
     @Override
-    protected void doGet(HttpServletRequest request,
-                         HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/addPatient.jsp")
-                .forward(request, response);
+        try {
+            Model model = ModelFactory.getModel();
+            String id = request.getParameter("id");
+            if (id == null || id.isBlank()){
+                request.setAttribute("errorMessage", "Missing patient id");
+                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                return;
+            }
+            Map<String, String> patient = model.getSpecificPatient(id);
+            request.setAttribute("id",id);
+            request.setAttribute("patient",patient);
+            request.getRequestDispatcher("/editPatient.jsp").forward(request, response);
+        }catch(DataLoadException e){
+            request.setAttribute("errorMessage", "Error adding patient: " + e.getMessage());
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
+        }
     }
 
     @Override
@@ -38,10 +54,14 @@ public class AddPatient extends HttpServlet {
             Model model = ModelFactory.getModel();
 
             Map<String, String> values = new HashMap<>();
-            String id = model.generateNewId();
+            String id = request.getParameter("id");
+            if (id == null || id.isBlank()){
+                request.setAttribute("errorMessage", "Missing patient id");
+                request.getRequestDispatcher("/error.jsp").forward(request, response);
+                return;
+            }
             String birthdate = request.getParameter("BIRTHDATE");
             String deathdate = request.getParameter("DEATHDATE");
-            values.put("ID", id);
             values.put("BIRTHDATE",  birthdate);
             values.put("DEATHDATE",  deathdate);
             values.put("SSN",        request.getParameter("SSN"));
@@ -67,37 +87,42 @@ public class AddPatient extends HttpServlet {
                     || values.get("LAST") == null || values.get("LAST").isBlank()) {
 
                 request.setAttribute("errorMessage", "First and last name are required.");
-                request.getRequestDispatcher("/addPatient.jsp")
+                request.setAttribute("patient", values);
+                request.setAttribute("id",id);
+                request.getRequestDispatcher("/editPatient.jsp")
                         .forward(request, response);
+                return;
             }
             if (!isValidDate(birthdate)) {
                 request.setAttribute("errorMessage", "Birthdate must be in YYYY-MM-DD format.");
-                request.getRequestDispatcher("/addPatient.jsp").forward(request, response);
+                request.setAttribute("patient", values);
+                request.setAttribute("id",id);
+                request.getRequestDispatcher("/editPatient.jsp").forward(request, response);
                 return;
             }
             if (!isValidDate(deathdate)) {
                 request.setAttribute("errorMessage", "Deathdate must be in YYYY-MM-DD format.");
-                request.getRequestDispatcher("/addPatient.jsp").forward(request, response);
+                request.setAttribute("patient", values);
+                request.setAttribute("id",id);
+                request.getRequestDispatcher("/editPatient.jsp").forward(request, response);
                 return;
             }
 
 
-            model.addPatient(values);
-            request.setAttribute("id",id);
-            response.sendRedirect(request.getContextPath() + "/patient?id=" + id);
+            model.editPatient(values, id);
 
             Path original = Paths.get("data/patients100.csv");
             Path tmp = Paths.get("data/patients100.tmp");
-            model.savePatientsToCsv(tmp,original);
+            model.savePatientsToCsv(tmp, original);
 
-            // Redirect to the new patient's page or the list
-            //response.sendRedirect(request.getContextPath() + "/patient?id=" + id);
+            response.sendRedirect(request.getContextPath() + "/patient?id=" + id);
+
 
         } catch (IOException e) {
             request.setAttribute("errorMessage", "Error loading data: " + e.getMessage());
             request.getRequestDispatcher("/error.jsp").forward(request, response);
-        } catch (DataLoadException e){
-            request.setAttribute("errorMessage", "Error adding patient: " + e.getMessage());
+        } catch (DataWriteException e){
+            request.setAttribute("errorMessage", "Error editing patient: " + e.getMessage());
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
@@ -112,4 +137,3 @@ public class AddPatient extends HttpServlet {
         }
     }
 }
-

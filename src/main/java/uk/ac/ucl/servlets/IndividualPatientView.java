@@ -36,6 +36,7 @@ public class IndividualPatientView extends HttpServlet {
                 return;
             }
             request.setAttribute("patient", patient);
+            request.setAttribute("id", id);
             request.getRequestDispatcher("/patient.jsp").forward(request, response);
         } catch (DataLoadException e){
             request.setAttribute("errorMessage", "Error loading patient: " + e.getMessage());

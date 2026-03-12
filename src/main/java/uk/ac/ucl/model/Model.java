@@ -57,6 +57,26 @@ public class Model
     }
   }
 
+  public void editPatient(Map<String,String> values, String id){
+    try {
+      System.out.println(id);
+      int row = patientIDtoRow.get(id);
+      for(Map.Entry<String,String> entry : values.entrySet()){
+        String colName = entry.getKey();
+        Column c = patients.getColumn(colName);
+        c.setRowValue(row, entry.getValue());
+        if (colName.equals("FIRST")){
+          String last = patientSummary.get(id).split(" ")[1];
+          patientSummary.put(id, entry.getValue().split("[0-9]")[0] + " " + last);
+        }else if(colName.equals("LAST")){
+          String first = patientSummary.get(id).split(" ")[0];
+          patientSummary.put(id, first + " " + entry.getValue().split("[0-9]")[0]);
+        }
+      }
+    }catch (ColumnNotFoundException e){
+      throw new DataWriteException("Error writing data" + e.getMessage());
+    }
+  }
 
   public void addPatient(Map<String,String> values){
     try {
