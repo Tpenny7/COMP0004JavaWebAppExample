@@ -30,16 +30,16 @@ public class EditPatient extends HttpServlet {
         try {
             Model model = ModelFactory.getModel();
             String id = request.getParameter("id");
-            if (id == null || id.isBlank()){
+            if (id == null || id.isBlank()) {
                 request.setAttribute("errorMessage", "Missing patient id");
                 request.getRequestDispatcher("/error.jsp").forward(request, response);
                 return;
             }
             Map<String, String> patient = model.getSpecificPatient(id);
-            request.setAttribute("id",id);
-            request.setAttribute("patient",patient);
+            request.setAttribute("id", id);
+            request.setAttribute("patient", patient);
             request.getRequestDispatcher("/editPatient.jsp").forward(request, response);
-        }catch(DataLoadException e){
+        } catch (DataLoadException e) {
             request.setAttribute("errorMessage", "Error adding patient: " + e.getMessage());
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
@@ -55,55 +55,54 @@ public class EditPatient extends HttpServlet {
 
             Map<String, String> values = new HashMap<>();
             String id = request.getParameter("id");
-            if (id == null || id.isBlank()){
+            if (id == null || id.isBlank()) {
                 request.setAttribute("errorMessage", "Missing patient id");
                 request.getRequestDispatcher("/error.jsp").forward(request, response);
                 return;
             }
             String birthdate = request.getParameter("BIRTHDATE");
             String deathdate = request.getParameter("DEATHDATE");
-            values.put("BIRTHDATE",  birthdate);
-            values.put("DEATHDATE",  deathdate);
-            values.put("SSN",        request.getParameter("SSN"));
-            values.put("DRIVERS",    request.getParameter("DRIVERS"));
-            values.put("PASSPORT",   request.getParameter("PASSPORT"));
-            values.put("PREFIX",     request.getParameter("PREFIX"));
-            values.put("FIRST",      request.getParameter("FIRST"));
-            values.put("LAST",       request.getParameter("LAST"));
-            values.put("SUFFIX",     request.getParameter("SUFFIX"));
-            values.put("MAIDEN",     request.getParameter("MAIDEN"));
-            values.put("MARITAL",    request.getParameter("MARITAL"));
-            values.put("RACE",       request.getParameter("RACE"));
-            values.put("ETHNICITY",  request.getParameter("ETHNICITY"));
-            values.put("GENDER",     request.getParameter("GENDER"));
+            values.put("BIRTHDATE", birthdate);
+            values.put("DEATHDATE", deathdate);
+            values.put("SSN", request.getParameter("SSN"));
+            values.put("DRIVERS", request.getParameter("DRIVERS"));
+            values.put("PASSPORT", request.getParameter("PASSPORT"));
+            values.put("PREFIX", request.getParameter("PREFIX"));
+            values.put("FIRST", request.getParameter("FIRST"));
+            values.put("LAST", request.getParameter("LAST"));
+            values.put("SUFFIX", request.getParameter("SUFFIX"));
+            values.put("MAIDEN", request.getParameter("MAIDEN"));
+            values.put("MARITAL", request.getParameter("MARITAL"));
+            values.put("RACE", request.getParameter("RACE"));
+            values.put("ETHNICITY", request.getParameter("ETHNICITY"));
+            values.put("GENDER", request.getParameter("GENDER"));
             values.put("BIRTHPLACE", request.getParameter("BIRTHPLACE"));
-            values.put("ADDRESS",    request.getParameter("ADDRESS"));
-            values.put("CITY",       request.getParameter("CITY"));
-            values.put("STATE",      request.getParameter("STATE"));
-            values.put("ZIP",        request.getParameter("ZIP"));
+            values.put("ADDRESS", request.getParameter("ADDRESS"));
+            values.put("CITY", request.getParameter("CITY"));
+            values.put("STATE", request.getParameter("STATE"));
+            values.put("ZIP", request.getParameter("ZIP"));
 
-            // Basic validation example
             if (values.get("FIRST") == null || values.get("FIRST").isBlank()
                     || values.get("LAST") == null || values.get("LAST").isBlank()) {
 
                 request.setAttribute("errorMessage", "First and last name are required.");
                 request.setAttribute("patient", values);
-                request.setAttribute("id",id);
+                request.setAttribute("id", id);
                 request.getRequestDispatcher("/editPatient.jsp")
                         .forward(request, response);
                 return;
             }
-            if (!isValidDate(birthdate)) {
+            if (birthdate == null || birthdate.isEmpty() || !isValidDate(birthdate)) {
                 request.setAttribute("errorMessage", "Birthdate must be in YYYY-MM-DD format.");
                 request.setAttribute("patient", values);
-                request.setAttribute("id",id);
+                request.setAttribute("id", id);
                 request.getRequestDispatcher("/editPatient.jsp").forward(request, response);
                 return;
             }
             if (!isValidDate(deathdate)) {
                 request.setAttribute("errorMessage", "Deathdate must be in YYYY-MM-DD format.");
                 request.setAttribute("patient", values);
-                request.setAttribute("id",id);
+                request.setAttribute("id", id);
                 request.getRequestDispatcher("/editPatient.jsp").forward(request, response);
                 return;
             }
@@ -115,13 +114,14 @@ public class EditPatient extends HttpServlet {
             Path tmp = Paths.get("data/patients100.tmp");
             model.savePatientsToCsv(tmp, original);
 
+            //shows patient summary of new patient
             response.sendRedirect(request.getContextPath() + "/patient?id=" + id);
 
 
         } catch (IOException e) {
             request.setAttribute("errorMessage", "Error loading data: " + e.getMessage());
             request.getRequestDispatcher("/error.jsp").forward(request, response);
-        } catch (DataWriteException e){
+        } catch (DataWriteException | DataLoadException e) {
             request.setAttribute("errorMessage", "Error editing patient: " + e.getMessage());
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }

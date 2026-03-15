@@ -20,14 +20,15 @@ public class AttributeNumbers extends HttpServlet {
             throws ServletException, IOException {
         String attribute = request.getParameter("name");
         Model model = ModelFactory.getModel();
-        if (attribute == null || attribute.isBlank()){
+        if (attribute == null || attribute.isBlank()) {
             request.setAttribute("errorMessage", "Missing patient id");
             request.getRequestDispatcher("/error.jsp").forward(request, response);
+            return;
         }
-        try{
+        try {
             Map<String, ArrayList<String[]>> attributeNumbers = model.attributeNumbers(attribute);
             request.setAttribute("attributeNumbers", attributeNumbers);
-            request.getRequestDispatcher("/attributeNumbers.jsp").forward(request,response);
+            request.getRequestDispatcher("/attributeNumbers.jsp").forward(request, response);
 
         } catch (DataLoadException e) {
             request.setAttribute("errorMessage", "Error loading patient: " + e.getMessage());

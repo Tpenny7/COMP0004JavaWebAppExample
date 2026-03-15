@@ -17,13 +17,13 @@ public class YoungestPerson extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try{
+        try {
             Model model = ModelFactory.getModel();
             String patientID = model.getYoungestPerson();
             String href = "/patient?id=" + patientID;
             RequestDispatcher rd = request.getRequestDispatcher(href);
-            rd.forward(request,response);
-        }catch (DataLoadException e){
+            rd.forward(request, response);
+        } catch (DataLoadException e) {
             request.setAttribute("errorMessage", "Error loading patient: " + e.getMessage());
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }

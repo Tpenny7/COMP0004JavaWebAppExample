@@ -1,6 +1,5 @@
 package uk.ac.ucl.servlets;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,7 +18,7 @@ public class ListAttributes extends HttpServlet {
             throws ServletException, IOException {
         Model model = ModelFactory.getModel();
         ArrayList<String> attributes = model.getAttributeNames();
-        request.setAttribute("attributeNames",attributes);
+        request.setAttribute("attributeNames", attributes);
         request.getRequestDispatcher("/attributeList.jsp").forward(request, response);
     }
 }

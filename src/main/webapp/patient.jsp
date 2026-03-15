@@ -3,7 +3,8 @@
 <%
   Map<String,String> patient = (Map<String,String>) request.getAttribute("patient");
   String id = (String) request.getAttribute("id");
-  String href = "editPatient?id=" + id;
+  String hrefEdit = "editPatient?id=" + id;
+  String hrefDelete = "deletePatient?id=" + id;
 %>
 
 <html>
@@ -14,7 +15,8 @@
 <jsp:include page="/header.jsp"/>
 
 <div class="main">
-  <p><a href="<%= href %>">Edit patient</a></p>
+  <p><a href ="<%= hrefEdit %>">Edit patient</a></p>
+  <p><a href ="<%= hrefDelete %>">Delete patient</a></p>
   <h2>Patient details:</h2>
 
 

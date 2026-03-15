@@ -28,7 +28,7 @@ public class SamePlacePeople extends HttpServlet {
             }
             request.setAttribute("addressPatients", addressPatients);
             request.getRequestDispatcher("/samePlace.jsp").forward(request, response);
-        }catch (DataLoadException e){
+        } catch (DataLoadException e) {
             request.setAttribute("errorMessage", "Error loading patients: " + e.getMessage());
             request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
