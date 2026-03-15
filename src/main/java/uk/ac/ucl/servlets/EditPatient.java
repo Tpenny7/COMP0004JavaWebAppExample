@@ -19,6 +19,8 @@ import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.ac.ucl.model.AppConfig.PATIENT_CSV_PATH;
+
 
 @WebServlet("/editPatient")
 public class EditPatient extends HttpServlet {
@@ -110,9 +112,8 @@ public class EditPatient extends HttpServlet {
 
             model.editPatient(values, id);
 
-            Path original = Paths.get("data/patients100.csv");
-            Path tmp = Paths.get("data/patients100.tmp");
-            model.savePatientsToCsv(tmp, original);
+            Path tmp = Paths.get("data/patients.tmp");
+            model.savePatientsToCsv(tmp, PATIENT_CSV_PATH);
 
             //shows patient summary of new patient
             response.sendRedirect(request.getContextPath() + "/patient?id=" + id);

@@ -19,6 +19,8 @@ import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.ac.ucl.model.AppConfig.PATIENT_CSV_PATH;
+
 @WebServlet("/addPatient")
 public class AddPatient extends HttpServlet {
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("uuuu-MM-dd");
@@ -85,9 +87,8 @@ public class AddPatient extends HttpServlet {
 
 
             model.addPatient(values);
-            Path original = Paths.get("data/patients100.csv");
-            Path tmp = Paths.get("data/patients100.tmp");
-            model.savePatientsToCsv(tmp, original);
+            Path tmp = Paths.get("data/patients.tmp");
+            model.savePatientsToCsv(tmp, PATIENT_CSV_PATH);
 
             //redirect to the patient detail page
             request.setAttribute("id", id);

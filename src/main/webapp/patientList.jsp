@@ -10,7 +10,7 @@
 <jsp:include page="/header.jsp"/>
 <div class="main">
   <h1>Search</h1>
-  <form method="GET" action="/runsearch">
+  <form method="POST" action="/runsearch">
     <input type="text" name="searchstring" required placeholder="Enter search keyword here"/>
     <input type="submit" value="Search"/>
   </form>

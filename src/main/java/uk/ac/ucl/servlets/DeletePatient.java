@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static uk.ac.ucl.model.AppConfig.PATIENT_CSV_PATH;
+
 @WebServlet("/deletePatient")
 public class DeletePatient extends HttpServlet {
     @Override
@@ -45,9 +47,8 @@ public class DeletePatient extends HttpServlet {
         try {
             Model model = ModelFactory.getModel();
             model.deletePatient(id);
-            Path original = Paths.get("data/patients100.csv");
-            Path tmp = Paths.get("data/patients100.tmp");
-            model.savePatientsToCsv(tmp, original);
+            Path tmp = Paths.get("data/patients.tmp");
+            model.savePatientsToCsv(tmp, PATIENT_CSV_PATH);
 
             request.setAttribute("message", "Patient " + id + " has been deleted.");
             request.getRequestDispatcher("/deletePatientSuccess.jsp")

@@ -45,7 +45,7 @@
             </label><br>
 
     <!-- Basic demographics -->
-    <label>Birthdate: (YYYY-MM-DD):
+    <label>Birthdate: (YYYY-MM-DD) <span class="required-mark">*</span>:
           <input type="text" name="BIRTHDATE">
         </label><br>
 

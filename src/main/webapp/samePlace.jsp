@@ -31,6 +31,8 @@
     Map<String, ArrayList<String[]>> patients =
         (Map<String, ArrayList<String[]>>) request.getAttribute("addressPatients");
 
+    boolean hasSharedResidence = false;
+
     if (patients != null && !patients.isEmpty()) {
 
       for (Map.Entry<String, ArrayList<String[]>> entry : patients.entrySet()) {
@@ -38,6 +40,7 @@
         ArrayList<String[]> residents = entry.getValue();
 
         if (residents == null || residents.size() < 2) continue;
+        hasSharedResidence = true;
 
   %>
 
@@ -65,7 +68,13 @@
       </div>
 
   <%
-      } // end entry loop
+      }
+
+      if (!hasSharedResidence && errorMessage == null) {
+      %>
+            <p>No two patients live in the same residence.</p>
+      <%
+          }
 
     } else if (errorMessage == null) {
   %>

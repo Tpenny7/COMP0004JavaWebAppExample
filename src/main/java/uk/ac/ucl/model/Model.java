@@ -96,17 +96,17 @@ public class Model {
           //updates the first name in the patientsummary map
             if (patient.containsKey("FIRST")) {
                 String last = patientSummary.get(id).split(" ")[1];
-                patientSummary.put(id, patient.get("ID").split("[0-9]")[0] + " " + last);
+                patientSummary.put(id, patient.get("FIRST").split("[0-9]")[0] + " " + last);
             }
           //updates the last name in the patientsummary map
             if (patient.containsKey("LAST")) {
                 String first = patientSummary.get(id).split(" ")[0];
-                patientSummary.put(id, first + " " + patient.get("ID").split("[0-9]")[0]);
+                patientSummary.put(id, first + " " + patient.get("LAST").split("[0-9]")[0]);
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new DataLoadException("Patient summary has invalid format. ID = " + id, e);
         } catch (NullPointerException e) {
-            throw new DataLoadException("Patient not found in patient summary. ID = " + id + e.getMessage());
+            throw new DataLoadException("Patient not found in patient summary. ID = " + id + " ." +  e.getMessage());
         }
     }
 
