@@ -1,5 +1,7 @@
 package uk.ac.ucl.model;
 
+import uk.ac.ucl.model.io.DataLoadException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -46,8 +48,17 @@ public class DataFrame implements Iterable<Column> {
     }
 
     public int getRowCount() {
-        return columns.isEmpty() ? 0 : columns.getFirst().getSize();
+        if (columns.isEmpty()) return 0;
+        int expected = columns.getFirst().getSize();
+        for (Column column : columns) {
+            if (column.getSize() != expected) {
+                throw new DataLoadException("Column " + column.getName() + " should have size " +
+                        expected + " but has size " + column.getSize());
+            }
+        }
+        return expected;
     }
+
 
     public String getValue(String columnName, int row) {
         return getColumn(columnName).getRowValue(row);

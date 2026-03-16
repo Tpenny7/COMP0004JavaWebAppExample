@@ -234,7 +234,7 @@ public class Model {
     }
 
     public void buildPatientSummary() {
-        patientSummary = new HashMap<>();
+        patientSummary = new LinkedHashMap<>();
         patientIDtoRow = new HashMap<>();
         try {
             Column firstNames = patients.getColumn("FIRST");
