@@ -106,14 +106,10 @@ public class Main
 
   public static void main(String[] args)
   {
-    // Set up logging first so subsequent steps can report progress and errors.
     final Logger logger = initialiseLogger();
-    // Read configuration values (with defaults).
     final int port = getPort();
-    // Resolve directories into Path objects.
     final Path webappDirectory = Paths.get(getWebappDir());
     final Path targetClassesDirectory = Paths.get(getClassesDir());
-    // Create the embedded Tomcat instance.
     final Tomcat tomcat = new Tomcat();
 
     try

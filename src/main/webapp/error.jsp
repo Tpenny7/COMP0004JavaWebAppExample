@@ -4,6 +4,6 @@
 <body>
   <h1>Something went wrong</h1>
   <p><%= request.getAttribute("errorMessage") %></p>
-  <p><a href="search.html">Back to search</a></p>
+  <p><a href="<%= request.getContextPath() %>/">Back Home</a></p>
 </body>
 </html>
